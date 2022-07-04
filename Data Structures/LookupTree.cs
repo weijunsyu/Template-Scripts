@@ -27,17 +27,17 @@ using System;
 
 public class LookupTree<T, U>
 {
-    private PermNode<T> _root;
+    private UniqueChildrenNode<T> _root;
     private U _rootValue;
-    private Dictionary<PermNode<T>, U> _lookupDict;
+    private Dictionary<UniqueChildrenNode<T>, U> _lookupDict;
 
     public LookupTree(T rootKey, U rootValue)
     {
-        _root = new PermNode<T>(rootKey);
+        _root = new UniqueChildrenNode<T>(rootKey);
         _rootValue = rootValue;
-        _lookupDict = new Dictionary<PermNode<T>, U>();
+        _lookupDict = new Dictionary<UniqueChildrenNode<T>, U>();
     }
-    public PermNode<T> GetRoot()
+    public UniqueChildrenNode<T> GetRoot()
     {
         return _root;
     }
@@ -49,10 +49,10 @@ public class LookupTree<T, U>
             return false;
         }
 
-        PermNode<T> current = _root;
+        UniqueChildrenNode<T> current = _root;
         for (int i = 1; i < nodeValues.Count; i++)
         {
-            PermNode<T> child = current.GetChild(nodeValues[i]);
+            UniqueChildrenNode<T> child = current.GetChild(nodeValues[i]);
             if (child != null)
             {
                 // Move to next node
@@ -70,7 +70,7 @@ public class LookupTree<T, U>
     }
     public U Lookup(List<T> nodeValues)
     {
-        PermNode<T> current = _root;
+        UniqueChildrenNode<T> current = _root;
         Stack<U> lookupStack = new Stack<U>();
         for (int i = 0; i < nodeValues.Count; i++)
         {
@@ -86,7 +86,7 @@ public class LookupTree<T, U>
                 // Make sure there exists another node in the node list
                 if (i + 1 < nodeValues.Count)
                 {
-                    PermNode<T> child = current.GetChild(nodeValues[i + 1]);
+                    UniqueChildrenNode<T> child = current.GetChild(nodeValues[i + 1]);
                     if (child != null)
                     {
                         // Move to next node
@@ -124,9 +124,9 @@ public class LookupTree<T, U>
         printer("[" + traversalStr + "]");
     }
 
-    private void TreeTraversal(PermNode<T> root, ref List<T> traversal)
+    private void TreeTraversal(UniqueChildrenNode<T> root, ref List<T> traversal)
     {
-        Dictionary<T, PermNode<T>> children = root.GetChildren();
+        Dictionary<T, UniqueChildrenNode<T>> children = root.GetChildren();
 
         if (children == null)
         {
@@ -139,5 +139,64 @@ public class LookupTree<T, U>
                 TreeTraversal(child, ref traversal);
             }
         }
+    }
+}
+
+public class UniqueChildrenNode<T>
+{
+    private T _value;
+    private UniqueChildrenNode<T> _parent;
+    private Dictionary<T, UniqueChildrenNode<T>> _children;
+
+    public UniqueChildrenNode(T value, UniqueChildrenNode<T> parent=null)
+    {
+        _value = value;
+        _parent = parent;
+        // list of child nodes such that key: value of node, value: node itself
+        _children = new Dictionary<T, UniqueChildrenNode<T>>();
+    }
+    public T GetValue()
+    {
+        return _value;
+    }
+    public UniqueChildrenNode<T> GetParent()
+    {
+        return _parent;
+    }
+    public Dictionary<T, UniqueChildrenNode<T>> GetChildren()
+    {
+        return _children;
+    }
+    public bool HasChild()
+    {
+        if (_children.Count != 0) {
+            return true;
+        }
+        return false;
+    }
+    public UniqueChildrenNode<T> AddChild(T value)
+    {
+        UniqueChildrenNode<T> node = new UniqueChildrenNode<T>(value, this);
+        _children.Add(value, node);
+        return node;
+    }
+    public UniqueChildrenNode<T> AddChild(UniqueChildrenNode<T> node)
+    {
+        node.AddParent(this);
+        _children.Add(node.GetValue(), node);
+        return node;
+    }
+    public void AddParent(UniqueChildrenNode<T> parent)
+    {
+        _parent = parent;
+    }
+    public UniqueChildrenNode<T> GetChild(T value)
+    {
+        UniqueChildrenNode<T> child;
+        if (_children.TryGetValue(value, out child))
+        {
+            return child;
+        }
+        return null;
     }
 }

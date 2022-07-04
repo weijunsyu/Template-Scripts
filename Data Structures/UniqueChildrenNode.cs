@@ -24,28 +24,28 @@ SOFTWARE.
 
 using System.Collections.Generic;
 
-public class PermNode<T>
+public class UniqueChildrenNode<T>
 {
     private T _value;
-    private PermNode<T> _parent;
-    private Dictionary<T, PermNode<T>> _children;
+    private UniqueChildrenNode<T> _parent;
+    private Dictionary<T, UniqueChildrenNode<T>> _children;
 
-    public PermNode(T value, PermNode<T> parent=null)
+    public UniqueChildrenNode(T value, UniqueChildrenNode<T> parent=null)
     {
         _value = value;
         _parent = parent;
         // list of child nodes such that key: value of node, value: node itself
-        _children = new Dictionary<T, PermNode<T>>();
+        _children = new Dictionary<T, UniqueChildrenNode<T>>();
     }
     public T GetValue()
     {
         return _value;
     }
-    public PermNode<T> GetParent()
+    public UniqueChildrenNode<T> GetParent()
     {
         return _parent;
     }
-    public Dictionary<T, PermNode<T>> GetChildren()
+    public Dictionary<T, UniqueChildrenNode<T>> GetChildren()
     {
         return _children;
     }
@@ -56,25 +56,25 @@ public class PermNode<T>
         }
         return false;
     }
-    public PermNode<T> AddChild(T value)
+    public UniqueChildrenNode<T> AddChild(T value)
     {
-        PermNode<T> node = new PermNode<T>(value, this);
+        UniqueChildrenNode<T> node = new UniqueChildrenNode<T>(value, this);
         _children.Add(value, node);
         return node;
     }
-    public PermNode<T> AddChild(PermNode<T> node)
+    public UniqueChildrenNode<T> AddChild(UniqueChildrenNode<T> node)
     {
         node.AddParent(this);
         _children.Add(node.GetValue(), node);
         return node;
     }
-    public void AddParent(PermNode<T> parent)
+    public void AddParent(UniqueChildrenNode<T> parent)
     {
         _parent = parent;
     }
-    public PermNode<T> GetChild(T value)
+    public UniqueChildrenNode<T> GetChild(T value)
     {
-        PermNode<T> child;
+        UniqueChildrenNode<T> child;
         if (_children.TryGetValue(value, out child))
         {
             return child;
