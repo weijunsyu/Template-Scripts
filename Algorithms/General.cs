@@ -32,7 +32,7 @@ public static int Modulo(int a, int b)
 }
 
 // Converts a percentage value of audio to decibels given a min and max decibel value.
-// Uses log to calculate decibels to beter simulate human hearing of audio levels. (Rather an a linear path)
+// Uses log to calculate decibels to beter simulate human hearing of audio levels. (Rather than a linear path)
 public static double ConvertPercentageRawToDecibels(double percentValue, double max, double min)
 {
     if (percentValue == 0)
